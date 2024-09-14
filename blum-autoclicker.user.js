@@ -6,9 +6,9 @@
 // @match        https://telegram.blum.codes/*
 // @grant        none
 // @icon
-// @downloadURL
-// @updateURL
-// @homepage     https://github.com/S3C237/Blum
+// @downloadURL  https://github.com/tienbui321/violentnst/blob/main/blum-autoclicker.user.js   
+// @updateURL    https://github.com/tienbui321/violentnst/blob/main/blum-autoclicker.user.js
+// @homepage     https://github.com/tienbui321/violentnst/blob/main/blum.png
 // ==/UserScript==
 
 let GAME_SETTINGS = {
