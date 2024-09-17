@@ -1,12 +1,13 @@
 ﻿// ==UserScript==
 // @name         Blum Autoclicker
-// @version      1.3
+// @version      1.4
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
 // @match        https://telegram.blum.codes/*
 // @grant        none
 // @icon         https://github.com/tienbui321/violentnst/raw/main/blum.png
 // @updateURL    https://github.com/tienbui321/violentnst/raw/main/blum-autoclicker.user.js
+// @downloadURL	 https://github.com/tienbui321/violentnst/raw/main/blum-autoclicker.user.js
 // @homepage     https://github.com/tienbui321/violentnst/raw/main/blum.png
 // ==/UserScript==
 
