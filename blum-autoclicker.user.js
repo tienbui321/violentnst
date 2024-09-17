@@ -1,24 +1,22 @@
 ﻿// ==UserScript==
 // @name         Blum Autoclicker
-// @version      1.5
+// @version      1.1
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
 // @match        https://telegram.blum.codes/*
 // @grant        none
-// @icon         https://github.com/tienbui321/violentnst/raw/main/blum.png
-// @updateURL    https://github.com/tienbui321/violentnst/raw/main/blum-autoclicker.user.js
-// @downloadURL	 https://github.com/tienbui321/violentnst/raw/main/blum-autoclicker.user.js
-// @homepage     https://github.com/tienbui321/violentnst/raw/main/blum.png
+// @icon         https://github.com/tienbui321/violentnst/blob/main/blum.png
+// @updateURL    
+// @homepage     https://github.com/tienbui321/violentnst/blob/main/blum.png
 // ==/UserScript==
 
 let GAME_SETTINGS = {
     minBombHits: 0, // Math.floor(Math.random() * 2), // Minimum number of bomb clicks in percentage
     minIceHits: Math.floor(Math.random() * 2) + 2, // Minimum number of freeze clicks
-    flowerSkipPercentage: Math.floor(Math.random() * 11) + 16, // Probability of clicking on a flower in percentage
+    flowerSkipPercentage: Math.floor(Math.random() * 11) + 15, // Probability of clicking on a flower in percentage
     minDelayMs: 2000, // Minimum delay between actions in milliseconds
     maxDelayMs: 5000, // Maximum delay between actions in milliseconds
 };
-
 
 let isGamePaused = false;
 
@@ -172,6 +170,7 @@ try {
 
     const taskButton = document.createElement('button');
     taskButton.textContent = 'Do Task';
+    taskButton.id = 'taskAutoButton';
     taskButton.style.position = 'fixed';
     taskButton.style.bottom = '20px';
     taskButton.style.right = '90px';
@@ -187,35 +186,64 @@ try {
 
     let playtime = 0;
 
-    function blum_doTask() {
+    async function blum_doTask() {
         playtime++;
-        if (playtime > 2)
+        if (playtime > 2) {
+            taskButton.textContent = "Done";
             return;
+        }
 
         _$(".layout-tabs.tabs a[href='/tasks']").click();
-        _clickToTab();
+
+        await sleep(getClickDelay(2000))
+
+        _$('.pages-tasks-card.is-short button.is-status-not-started').click();
+        await _doShortTasks();
+
+        _$(".kit-bottom-sheet dialog .header button.close-btn").click();
+
+        await _clickToTab();
+    }
+
+    async function _doShortTasks() {
+        await sleep(getClickDelay(2000));
+
+        let taskList = _$('.pages-tasks-subtasks-modal > .nested-tasks button.is-status-not-started, .pages-tasks-subtasks-modal > .nested-tasks button.is-status-ready-for-claim');
+        if (!taskList || taskList.length === 0)
+            return;
+
+        for (var i = 0; i < taskList.length; i++) {
+            let task = taskList[i];
+            await sleep(getClickDelay());
+
+            if (hasClass(task, "is-status-not-started"))
+                task.click();
+
+            if (hasClass(task, 'is-status-ready-for-claim'))
+                task.click();
+        }
     }
 
     async function _clickToTab(idx) {
-        await sleep(3000);
-        idx = idx || 2;
-        if (idx == 3)
-            idx++;
+        idx = idx || 4;
+        if (idx > 5)
+            return blum_doTask();
+
+        await sleep(getClickDelay());
 
         let tab = _$('.pages-tasks-sub-sections .kit-tabs .list > label.show-dot:nth-child(' + idx + ') > span');
         if (!tab || tab.length == 0) {
             // chay het thi vong lai claim
-            blum_doTask();
+            idx == 4 ? await _clickToTab(5) : blum_doTask();
             return;
         }
 
         tab.click();
-        await sleep(3000);
+        await sleep(getClickDelay());
 
-        _doTasksInTab();
+        await _doTasksInTab();
 
-        await sleep(2000);
-        _clickToTab(++idx);
+        await _clickToTab(++idx);
     }
 
     async function _doTasksInTab() {
@@ -225,22 +253,60 @@ try {
 
         for (var i = 0; i < taskList.length; i++) {
             let task = taskList[i];
-            await sleep(1500);
-            clickTask(task);
+            await sleep(getClickDelay());
+            await clickTask(task);
         }
     }
 
     async function clickTask(task) {
         let taskBtn = _$('button.pill-btn', task);
-        let text = taskBtn.innerText.trim();
+        let text = task.querySelector(".title").innerText.trim();
         let is_not_started = hasClass(taskBtn, "is-status-not-started");
         let is_claim = hasClass(taskBtn, "is-status-ready-for-claim");
+        let is_Verify = hasClass(taskBtn, 'is-status-ready-for-verify');
 
         if (is_not_started && !hasIgnoreTask(text))
             taskBtn.click();
-        else if (is_claim == true) {
+
+        if (is_claim == true) {
             taskBtn.click();
         }
+
+        if (is_Verify) {
+            // if (text == 'Secure your Crypto!')
+            //     await VerifySecure(taskBtn);
+
+            // if (text == 'Forks Explained')
+            //     await VerifyForks(taskBtn);
+
+            // if (text == 'How to Analyze Crypto?')
+            //     await VerifyAnalyzeCrypto(taskBtn);
+        }
+    }
+
+    async function VerifySecure(taskBtn) {
+        taskBtn.click();
+        await sleep(getClickDelay());
+
+        _$('.kit-overlay .input-container input').value = "BEST PROJECT EVER";
+        _$('.kit-overlay .kit-fixed-wrapper button').click();
+    }
+
+
+    async function VerifyForks(taskBtn) {
+        taskBtn.click();
+        await sleep(getClickDelay());
+
+        _$('.kit-overlay .input-container input').value = "GO GET";
+        _$('.kit-overlay .kit-fixed-wrapper button').click();
+    }
+
+    async function VerifyAnalyzeCrypto(taskBtn) {
+        taskBtn.click();
+        await sleep(getClickDelay());
+
+        _$('.kit-overlay .input-container input').value = "VALUE";
+        _$('.kit-overlay .kit-fixed-wrapper button').click();
     }
 
     function hasIgnoreTask(text) {
@@ -263,6 +329,11 @@ try {
 
     function hasClass(element, className) {
         return (' ' + element.className + ' ').indexOf(' ' + className + ' ') > -1;
+    }
+
+    function getClickDelay(offset) {
+        offset = offset | 1000;
+        return Math.floor(Math.random() * (2000 - 1000 + 1) + offset);
     }
 } catch (e) {
     console.log(e);
