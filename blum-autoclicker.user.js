@@ -1,6 +1,6 @@
 ﻿// ==UserScript==
 // @name         Blum Autoclicker
-// @version      1.4
+// @version      1.5
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
 // @match        https://telegram.blum.codes/*
@@ -14,10 +14,11 @@
 let GAME_SETTINGS = {
     minBombHits: 0, // Math.floor(Math.random() * 2), // Minimum number of bomb clicks in percentage
     minIceHits: Math.floor(Math.random() * 2) + 2, // Minimum number of freeze clicks
-    flowerSkipPercentage: Math.floor(Math.random() * 11) + 15, // Probability of clicking on a flower in percentage
+    flowerSkipPercentage: Math.floor(Math.random() * 11) + 16, // Probability of clicking on a flower in percentage
     minDelayMs: 2000, // Minimum delay between actions in milliseconds
     maxDelayMs: 5000, // Maximum delay between actions in milliseconds
 };
+
 
 let isGamePaused = false;
 
