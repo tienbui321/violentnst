@@ -5,10 +5,10 @@
 // @author       TienBV
 // @match        https://www.binance.com/*
 // @grant        none
-// @icon         https://github.com/tienbui321/violentnst/blob/main/blum.png
-// @updateURL    
-// @downloadURL 
-// @homepage     https://github.com/tienbui321/violentnst/blob/main/blum.png
+// @icon         https://github.com/tienbui321/violentnst/raw/main/blum.png
+// @updateURL    https://github.com/tienbui321/violentnst/raw/main/moonbix-autoclicker.user.js
+// @downloadURL  https://github.com/tienbui321/violentnst/blob/main/moonbix-autoclicker.user.js
+// @homepage     https://github.com/tienbui321/violentnst/raw/main/blum.png
 // ==/UserScript==
 
 try {
@@ -31,11 +31,11 @@ try {
             if (canvas) {
                 const interval = setInterval(() => {
                     simulateClick(canvas);
-                }, 1000);
+                }, getNewGameDelay());
             } else {
                 console.log('Canvas not found.');
             }
-        }, 3000);
+        }, 2000);
     }
 
     function clickElement(element) {
