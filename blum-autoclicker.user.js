@@ -5,9 +5,10 @@
 // @author       TienBV
 // @match        https://telegram.blum.codes/*
 // @grant        none
-// @icon         https://github.com/tienbui321/violentnst/blob/main/blum.png
-// @updateURL    
-// @homepage     https://github.com/tienbui321/violentnst/blob/main/blum.png
+// @icon         https://github.com/tienbui321/violentnst/raw/main/blum.png
+// @updateURL    https://github.com/tienbui321/violentnst/raw/main/blum-autoclicker.user.js
+// @downloadURL  https://github.com/tienbui321/violentnst/raw/main/blum-autoclicker.user.js
+// @homepage     https://github.com/tienbui321/violentnst/raw/main/blum.png
 // ==/UserScript==
 
 let GAME_SETTINGS = {
