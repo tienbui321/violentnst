@@ -29,6 +29,7 @@ try {
     document.body.appendChild(taskButton);
 
     async function matchain_doTask() {
+        await sleep(1500);
         _$("#root .bar___hi4Iz li:nth-child(2)").click();
         taskButton.textContent = "Doing";
         await sleep(getClickDelay())
@@ -91,44 +92,44 @@ try {
         return Math.floor(Math.random() * (2000 - 1000 + 1) + offset);
     }
 
-    taskButton.click();
+    matchain_doTask();
 
-    let gameCount = 1;
-    let gameId = 0;
+    // let gameCount = 1;
+    // let gameId = 0;
 
-    function playGames() {
+    // function playGames() {
 
-    }
+    // }
 
-    function getPlay() {
-        if (gameCount == 0)
-            return;
+    // function getPlay() {
+    //     if (gameCount == 0)
+    //         return;
 
-        fetch('https://tgapp-api.matchain.io/api/tgapp/v1/game/play', {
-            method: "GET"
-        }).then((response) => playTheGame(response.json()))
-    }
+    //     fetch('https://tgapp-api.matchain.io/api/tgapp/v1/game/play', {
+    //         method: "GET"
+    //     }).then((response) => playTheGame(response.json()))
+    // }
 
-    function playTheGame(game) {
-        if (game.code != 200)
-            return;
-        gameCount = game.data.game_count;
-        gameId = game.data.game_id;
+    // function playTheGame(game) {
+    //     if (game.code != 200)
+    //         return;
+    //     gameCount = game.data.game_count;
+    //     gameId = game.data.game_id;
 
-        await sleep(4000);
-        claimGame();
-    }
+    //     await sleep(4000);
+    //     claimGame();
+    // }
 
-    function claimGame() {
-        fetch('https://tgapp-api.matchain.io/api/tgapp/v1/game/claim', {
-            game_id: gameId,
-            point: getScore()
-        })
-    }
+    // function claimGame() {
+    //     fetch('https://tgapp-api.matchain.io/api/tgapp/v1/game/claim', {
+    //         game_id: gameId,
+    //         point: getScore()
+    //     })
+    // }
 
-    function getScore() {
-        return Math.floor(Math.random() * (150 - 100) + 12);
-    }
+    // function getScore() {
+    //     return Math.floor(Math.random() * (150 - 100) + 12);
+    // }
 } catch (e) {
     console.log(e);
 }
