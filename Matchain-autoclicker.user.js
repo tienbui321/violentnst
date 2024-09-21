@@ -6,8 +6,8 @@
     // @match        https://tgapp.matchain.io/*
     // @grant        none
     // @icon         https://github.com/tienbui321/violentnst/raw/main/blum.png
-    // @updateURL    
-    // @downloadURL  
+    // @updateURL    https://github.com/tienbui321/violentnst/raw/main/Matchain-autoclicker.user.js
+    // @downloadURL  https://github.com/tienbui321/violentnst/raw/main/Matchain-autoclicker.user.js
     // @homepage     https://github.com/tienbui321/violentnst/raw/main/blum.png
     // ==/UserScript==
 
@@ -30,13 +30,16 @@
 
         async function matchain_doTask() {
             await sleep(1500);
-
             await _doClaim();
 
             _$("#root .bar___hi4Iz li:nth-child(2)").click();
             taskButton.textContent = "Doing";
+
             await sleep(getClickDelay())
             await _doShortTasks();
+
+            await sleep(getClickDelay(1000));
+            // await process_play_game();
         }
 
         async function _doClaim() {
@@ -46,7 +49,7 @@
             }
 
             let i = 0;
-            while (i < 3) {
+            while (i < 5) {
                 let startClaimBtn = document.querySelector(".btn_claim___AC3ka.farming____9oEZ");
                 if (startClaimBtn) {
                     startClaimBtn.click();
@@ -69,6 +72,7 @@
             }
 
             taskButton.textContent = "Done";
+            taskButton.classList.add("task_done");
         }
 
         async function resolveTask(taskItem) {
@@ -80,6 +84,7 @@
                 return startBtn.click();
 
             await sleep(500);
+
             startBtn.click();
 
             let i = 0;
@@ -114,44 +119,60 @@
             return Math.floor(Math.random() * (2000 - 1000 + 1) + offset);
         }
 
+        // Game Play
+
+        async function start_game(success) {
+            let url = "https://tgapp-api.matchain.io/api/tgapp/v1/game/play";
+
+            let response = await fetch(url, {
+                method: "GET"
+            });
+
+            await success(await response.json());
+        }
+
+        async function claim_game(token, game_id, point, proxies = None) {
+            let url = "https://tgapp-api.matchain.io/api/tgapp/v1/game/claim";
+            let payload = { "game_id": game_id, "point": point };
+
+            let res = await fetch(url, {
+                method: "POST",
+                data: payload
+            });
+
+            console.log(res.json());
+        }
+
+        async function process_play_game() {
+            start_game(async(game) => {
+                try {
+                    let game_id = game["data"]["game_id"]
+                    let ticket_left = game["data"]["game_count"]
+                    if (game_id == "") {
+                        return
+                    }
+
+                    await sleep(30 * 1000);
+
+                    let point = Math.floor(Math.random() * (150 - 130 + 10) + 5);
+
+                    await claim_game(
+                        game_id = game_id, point = point
+                    )
+
+                    if (ticket_left == 0)
+                        return
+
+                    await sleep(getClickDelay(1000));
+                    await process_play_game();
+                } catch {
+
+                }
+            });
+        }
+
         matchain_doTask();
 
-        // let gameCount = 1;
-        // let gameId = 0;
-
-        // function playGames() {
-
-        // }
-
-        // function getPlay() {
-        //     if (gameCount == 0)
-        //         return;
-
-        //     fetch('https://tgapp-api.matchain.io/api/tgapp/v1/game/play', {
-        //         method: "GET"
-        //     }).then((response) => playTheGame(response.json()))
-        // }
-
-        // function playTheGame(game) {
-        //     if (game.code != 200)
-        //         return;
-        //     gameCount = game.data.game_count;
-        //     gameId = game.data.game_id;
-
-        //     await sleep(4000);
-        //     claimGame();
-        // }
-
-        // function claimGame() {
-        //     fetch('https://tgapp-api.matchain.io/api/tgapp/v1/game/claim', {
-        //         game_id: gameId,
-        //         point: getScore()
-        //     })
-        // }
-
-        // function getScore() {
-        //     return Math.floor(Math.random() * (150 - 100) + 12);
-        // }
     } catch (e) {
         console.log(e);
     }
