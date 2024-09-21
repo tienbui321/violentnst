@@ -1,6 +1,6 @@
 ﻿    // ==UserScript==
     // @name         Matchain Autoclicker TienBV
-    // @version      1.1
+    // @version      1.2
     // @namespace    Violentmonkey Scripts
     // @author       TienBV
     // @match        https://tgapp.matchain.io/*
