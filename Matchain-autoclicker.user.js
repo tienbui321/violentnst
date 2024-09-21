@@ -29,7 +29,6 @@
         document.body.appendChild(taskButton);
 
         async function matchain_doTask() {
-            await sleep(1500);
             await _doClaim();
 
             _$("#root .bar___hi4Iz li:nth-child(2)").click();
@@ -38,27 +37,13 @@
             await sleep(getClickDelay())
             await _doShortTasks();
 
-            await sleep(getClickDelay(1000));
+            // await sleep(getClickDelay(1000));
             // await process_play_game();
         }
 
         async function _doClaim() {
-            let claimBtn = document.querySelector(".btn_claim___AC3ka:not(.farming____9oEZ)");
-            if (claimBtn) {
-                claimBtn.click();
-            }
-
-            let i = 0;
-            while (i < 5) {
-                let startClaimBtn = document.querySelector(".btn_claim___AC3ka.farming____9oEZ");
-                if (startClaimBtn) {
-                    startClaimBtn.click();
-                    break
-                }
-
-                await sleep(getClickDelay());
-                i++;
-            }
+            await waitAndClick(".btn_claim___AC3ka:not(.farming____9oEZ)");
+            await waitAndClick(".btn_claim___AC3ka.farming____9oEZ");
         }
 
         async function _doShortTasks() {
@@ -86,17 +71,7 @@
             await sleep(500);
 
             startBtn.click();
-
-            let i = 0;
-            while (i < 5) {
-                let claimBtn = document.querySelector('.btn___xz27R.claim___VQBtK');
-                if (claimBtn) {
-                    claimBtn.click();
-                    break;
-                }
-                await sleep(getClickDelay());
-                i++;
-            }
+            await waitAndClick('.btn___xz27R.claim___VQBtK');
         }
 
         function _$(selector, parent) {
@@ -169,6 +144,20 @@
 
                 }
             });
+        }
+
+        async function waitAndClick(selector) {
+            let i = 0;
+            while (i < 10) {
+                let startClaimBtn = document.querySelector(selector);
+                if (startClaimBtn) {
+                    startClaimBtn.click();
+                    break
+                }
+
+                await sleep(getClickDelay());
+                i++;
+            }
         }
 
         matchain_doTask();
