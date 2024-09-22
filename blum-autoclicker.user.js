@@ -1,6 +1,6 @@
 ﻿// ==UserScript==
 // @name         Blum Autoclicker TienBV
-// @version      2.1
+// @version      2.2
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
 // @match        https://telegram.blum.codes/*
@@ -184,7 +184,7 @@ try {
 
         await _doClaims();
 
-        await _doTasks();
+        // await _doTasks();
 
         await _playGames();
     }
