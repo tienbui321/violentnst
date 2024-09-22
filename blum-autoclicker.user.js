@@ -19,6 +19,8 @@ let GAME_SETTINGS = {
     maxDelayMs: 5000, // Maximum delay between actions in milliseconds
 };
 
+
+
 let isGamePaused = false;
 
 try {
