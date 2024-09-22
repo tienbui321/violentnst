@@ -1,6 +1,6 @@
 ﻿// ==UserScript==
 // @name         Blum Autoclicker TienBV
-// @version      2.2
+// @version      2.3
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
 // @match        https://telegram.blum.codes/*
@@ -159,32 +159,12 @@ try {
     async function _doAuto() {
         await sleep(2000);
 
-        const observer = new MutationObserver(mutations => {
-            for (const mutation of mutations) {
-                if (mutation.type === 'childList') {
-                    checkOutGame();
-                    checkGameOver();
-                    if (isPlayingGame == 0) {
-                        checkClaimTicket();
-
-                        checkClaim();
-
-                        checkStartClaim();
-                    }
-                }
-            }
-        });
-
-        const appElement = await waitAndSelect('#app');
-        if (appElement) {
-            observer.observe(appElement, { childList: true, subtree: true });
-        }
-
         taskButton.textContent = "Doing";
 
         await _doClaims();
 
         // await _doTasks();
+        regObserve();
 
         await _playGames();
     }
@@ -389,6 +369,30 @@ try {
     function setTaskDone() {
         taskButton.textContent = "Done";
         taskButton.classList.add("task_done");
+    }
+
+    function regObserve() {
+        const observer = new MutationObserver(mutations => {
+            for (const mutation of mutations) {
+                if (mutation.type === 'childList') {
+                    checkOutGame();
+                    checkGameOver();
+                    if (isPlayingGame == 0) {
+                        checkClaimTicket();
+
+                        checkClaim();
+
+                        checkStartClaim();
+                    }
+                }
+            }
+        });
+
+        const appElement = await waitAndSelect('#app');
+        if (appElement) {
+            observer.observe(appElement, { childList: true, subtree: true });
+        }
+
     }
 
     _doAuto();
