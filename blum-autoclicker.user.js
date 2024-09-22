@@ -1,6 +1,6 @@
 ﻿// ==UserScript==
 // @name         Blum Autoclicker TienBV
-// @version      2.0
+// @version      2.1
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
 // @match        https://telegram.blum.codes/*
@@ -233,11 +233,10 @@ try {
 
     function checkGameOver() {
         let continueEl = _$(".pages-game-end .buttons > button:last-child .label");
-        if (continueEl.textContent == "Continue"); {
+        if (continueEl.textContent == "Continue") {
             continueEl.click();
             setTaskDone();
         }
-
     }
 
     let playtime = 0;
