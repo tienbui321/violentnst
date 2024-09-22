@@ -1,6 +1,6 @@
 ﻿// ==UserScript==
 // @name         Blum Autoclicker TienBV
-// @version      1.3
+// @version      1.4
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
 // @match        https://telegram.blum.codes/*
@@ -190,13 +190,13 @@ try {
 
     async function _doClaims() {
         let claimTicketSelector = "#app > div.daily-reward-page.page.no-padding > div > div.pages-daily-reward-reward > div.footer > div.kit-fixed-wrapper.no-layout-tabs > button";
-        waitAndClick(claimTicketSelector);
+        await waitAndClick(claimTicketSelector);
 
         let startClaimSelector = "#app > div.index-page.page > div > div.kit-fixed-wrapper.has-layout-tabs > div > button.is-primary";
-        waitAndClick(startClaimSelector);
+        await waitAndClick(startClaimSelector);
 
         let claimSelector = "#app > div.index-page.page > div > div.kit-fixed-wrapper.has-layout-tabs .index-farming-button button.is-done";
-        waitAndClick(claimSelector);
+        await waitAndClick(claimSelector);
     }
     async function _playGames() {
         // Click tab Home
