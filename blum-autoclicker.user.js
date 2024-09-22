@@ -1,6 +1,6 @@
 ﻿// ==UserScript==
 // @name         Blum Autoclicker TienBV
-// @version      1.8
+// @version      1.9
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
 // @match        https://telegram.blum.codes/*
@@ -173,11 +173,10 @@ try {
             }
         });
 
-        const appElement = document.querySelector('#app');
+        const appElement = await waitAndSelect('#app');
         if (appElement) {
             observer.observe(appElement, { childList: true, subtree: true });
         }
-
 
         taskButton.textContent = "Doing";
 
@@ -366,6 +365,19 @@ try {
             if (startClaimBtn) {
                 startClaimBtn.click();
                 break
+            }
+
+            await sleep(getClickDelay());
+            i++;
+        }
+    }
+
+    async function waitAndSelect(selector) {
+        let i = 0;
+        while (i < 4) {
+            let startClaimBtn = document.querySelector(selector);
+            if (startClaimBtn) {
+                return startClaimBtn;
             }
 
             await sleep(getClickDelay());
