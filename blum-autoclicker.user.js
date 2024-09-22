@@ -181,7 +181,7 @@ try {
 
         taskButton.textContent = "Doing";
 
-        // await _doClaims();
+        await _doClaims();
 
         await _doTasks();
 
@@ -359,7 +359,7 @@ try {
 
     async function waitAndClick(selector) {
         let i = 0;
-        while (i < 10) {
+        while (i < 4) {
             let startClaimBtn = document.querySelector(selector);
             if (startClaimBtn) {
                 startClaimBtn.click();
