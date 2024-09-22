@@ -1,6 +1,6 @@
 ﻿// ==UserScript==
 // @name         Blum Autoclicker TienBV
-// @version      1.0
+// @version      1.1
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
 // @match        https://telegram.blum.codes/*
@@ -134,47 +134,14 @@ try {
         setTimeout(continuousPlayButtonCheck, 1000);
     }
 
-    const observer = new MutationObserver(mutations => {
-        for (const mutation of mutations) {
-            if (mutation.type === 'childList') {
-                checkGameCompletion();
-            }
-        }
-    });
-
-    const appElement = document.querySelector('#app');
-    if (appElement) {
-        observer.observe(appElement, { childList: true, subtree: true });
-    }
-
     continuousPlayButtonCheck();
-
-    const pauseButton = document.createElement('button');
-    pauseButton.textContent = 'Pause';
-    pauseButton.style.position = 'fixed';
-    pauseButton.style.bottom = '20px';
-    pauseButton.style.right = '20px';
-    pauseButton.style.zIndex = '9999';
-    pauseButton.style.padding = '4px 8px';
-    pauseButton.style.backgroundColor = '#5d5abd';
-    pauseButton.style.color = 'white';
-    pauseButton.style.border = 'none';
-    pauseButton.style.borderRadius = '10px';
-    pauseButton.style.cursor = 'pointer';
-    pauseButton.onclick = toggleGamePause;
-    document.body.appendChild(pauseButton);
-
-    function toggleGamePause() {
-        isGamePaused = !isGamePaused;
-        pauseButton.textContent = isGamePaused ? 'Resume' : 'Pause';
-    }
 
     const taskButton = document.createElement('button');
     taskButton.textContent = 'Do Task';
     taskButton.id = 'taskAutoButton';
     taskButton.style.position = 'fixed';
     taskButton.style.bottom = '20px';
-    taskButton.style.right = '90px';
+    taskButton.style.right = '20px';
     taskButton.style.zIndex = '9999';
     taskButton.style.padding = '4px 8px';
     taskButton.style.backgroundColor = '#5d5abd';
@@ -182,18 +149,103 @@ try {
     taskButton.style.border = 'none';
     taskButton.style.borderRadius = '10px';
     taskButton.style.cursor = 'pointer';
-    taskButton.onclick = blum_doTask;
+    taskButton.onclick = _doAuto;
     document.body.appendChild(taskButton);
+
+    let isPlayingGame = 0;
+
+    async function _doAuto() {
+        await sleep(2000);
+
+        const observer = new MutationObserver(mutations => {
+            for (const mutation of mutations) {
+                if (mutation.type === 'childList') {
+                    checkOutGame();
+
+                    if (isPlayingGame == 0) {
+                        checkClaimTicket();
+
+                        checkClaim();
+
+                        checkStartClaim();
+                    }
+                }
+            }
+        });
+
+        const appElement = document.querySelector('#app');
+        if (appElement) {
+            observer.observe(appElement, { childList: true, subtree: true });
+        }
+
+
+        taskButton.textContent = "Doing";
+
+        // await _doClaims();
+
+        await _doTasks();
+
+        await _playGames();
+    }
+
+    async function _doClaims() {
+        let claimTicketSelector = "#app > div.daily-reward-page.page.no-padding > div > div.pages-daily-reward-reward > div.footer > div.kit-fixed-wrapper.no-layout-tabs > button";
+        waitAndClick(claimTicketSelector);
+
+        let startClaimSelector = "#app > div.index-page.page > div > div.kit-fixed-wrapper.has-layout-tabs > div > button.is-primary";
+        waitAndClick(startClaimSelector);
+
+        let claimSelector = "#app > div.index-page.page > div > div.kit-fixed-wrapper.has-layout-tabs .index-farming-button button.is-done";
+        waitAndClick(claimSelector);
+    }
+    async function _playGames() {
+        // Click tab Home
+        _$(".layout-tabs.tabs a[href='/']").click();
+
+        if (hasClass(_$(".play-btn"), "secondary"))
+            return setTaskDone();
+
+        await waitAndClick('.play-btn:not(.secondary)');
+        isPlayingGame = 1;
+    }
+
+    function checkOutGame() {
+        waitAndClick('.play-btn:not(.secondary)');
+    }
+
+    function checkClaimTicket() {
+        let claimTicketEl = _$("#app > div.daily-reward-page.page.no-padding > div > div.pages-daily-reward-reward > div.footer > div.kit-fixed-wrapper.no-layout-tabs > button");
+        claimTicketEl && claimTicketEl.click();
+    }
+
+    function checkClaim() {
+        let claimTicketEl = _$("#app > div.index-page.page > div > div.kit-fixed-wrapper.has-layout-tabs .index-farming-button button.is-done");
+        claimTicketEl && claimTicketEl.click();
+    }
+
+    function checkStartClaim() {
+        let claimTicketEl = _$("#app > div.index-page.page > div > div.kit-fixed-wrapper.has-layout-tabs > div > button.is-primary");
+        claimTicketEl && claimTicketEl.click();
+    }
+
+    function checkGameOver() {
+        let continueEl = _$(".pages-game-end .buttons > button:last-child .label");
+        if (continueEl.textContent == "Continue"); {
+            continueEl.click();
+            setTaskDone();
+        }
+
+    }
 
     let playtime = 0;
 
-    async function blum_doTask() {
+    async function _doTasks() {
         playtime++;
         if (playtime > 2) {
-            taskButton.textContent = "Done";
             return;
         }
 
+        // Click tab Tasks
         _$(".layout-tabs.tabs a[href='/tasks']").click();
 
         await sleep(getClickDelay(2000))
@@ -228,14 +280,14 @@ try {
     async function _clickToTab(idx) {
         idx = idx || 4;
         if (idx > 5)
-            return blum_doTask();
+            return _doTasks();
 
         await sleep(getClickDelay());
 
         let tab = _$('.pages-tasks-sub-sections .kit-tabs .list > label.show-dot:nth-child(' + idx + ') > span');
         if (!tab || tab.length == 0) {
             // chay het thi vong lai claim
-            idx == 4 ? await _clickToTab(5) : blum_doTask();
+            idx == 4 ? await _clickToTab(5) : _doTasks();
             return;
         }
 
@@ -248,6 +300,10 @@ try {
     }
 
     async function _doTasksInTab() {
+        let hasStartOrClaim = _$('.tasks-list > div button.pill-btn.is-status-not-started, .tasks-list > div button.pill-btn.is-status-ready-for-claim');
+        if (hasStartOrClaim.length == 0)
+            return;
+
         let taskList = _$('.tasks-list > div');
         if (!taskList || taskList.length === 0)
             return;
@@ -272,42 +328,6 @@ try {
         if (is_claim == true) {
             taskBtn.click();
         }
-
-        if (is_Verify) {
-            // if (text == 'Secure your Crypto!')
-            //     await VerifySecure(taskBtn);
-
-            // if (text == 'Forks Explained')
-            //     await VerifyForks(taskBtn);
-
-            // if (text == 'How to Analyze Crypto?')
-            //     await VerifyAnalyzeCrypto(taskBtn);
-        }
-    }
-
-    async function VerifySecure(taskBtn) {
-        taskBtn.click();
-        await sleep(getClickDelay());
-
-        _$('.kit-overlay .input-container input').value = "BEST PROJECT EVER";
-        _$('.kit-overlay .kit-fixed-wrapper button').click();
-    }
-
-
-    async function VerifyForks(taskBtn) {
-        taskBtn.click();
-        await sleep(getClickDelay());
-
-        _$('.kit-overlay .input-container input').value = "GO GET";
-        _$('.kit-overlay .kit-fixed-wrapper button').click();
-    }
-
-    async function VerifyAnalyzeCrypto(taskBtn) {
-        taskBtn.click();
-        await sleep(getClickDelay());
-
-        _$('.kit-overlay .input-container input').value = "VALUE";
-        _$('.kit-overlay .kit-fixed-wrapper button').click();
     }
 
     function hasIgnoreTask(text) {
@@ -336,6 +356,28 @@ try {
         offset = offset | 1000;
         return Math.floor(Math.random() * (2000 - 1000 + 1) + offset);
     }
+
+    async function waitAndClick(selector) {
+        let i = 0;
+        while (i < 10) {
+            let startClaimBtn = document.querySelector(selector);
+            if (startClaimBtn) {
+                startClaimBtn.click();
+                break
+            }
+
+            await sleep(getClickDelay());
+            i++;
+        }
+    }
+
+    function setTaskDone() {
+        taskButton.textContent = "Done";
+        taskButton.classList.add("task_done");
+    }
+
+    _doAuto();
+
 } catch (e) {
     console.log(e);
 }
