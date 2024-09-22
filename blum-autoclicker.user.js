@@ -1,6 +1,6 @@
 ﻿// ==UserScript==
 // @name         Blum Autoclicker TienBV
-// @version      1.7
+// @version      1.8
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
 // @match        https://telegram.blum.codes/*
@@ -203,6 +203,7 @@ try {
         // Click tab Home
         _$(".layout-tabs.tabs a[href='/']").click();
 
+        await sleep(1500);
         if (hasClass(_$(".play-btn"), "secondary"))
             return setTaskDone();
 
@@ -251,10 +252,10 @@ try {
 
         await sleep(getClickDelay(2000))
 
-        _$('.pages-tasks-card.is-short button.is-status-not-started').click();
-        await _doShortTasks();
+        //_$('.pages-tasks-card.is-short button.is-status-not-started').click();
+        // await _doShortTasks();
 
-        _$(".kit-bottom-sheet dialog .header button.close-btn").click();
+        //_$(".kit-bottom-sheet dialog .header button.close-btn").click();
 
         await _clickToTab();
     }
