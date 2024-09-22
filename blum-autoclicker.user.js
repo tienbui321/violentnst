@@ -1,5 +1,5 @@
 ﻿// ==UserScript==
-// @name         Blum Autoclicker TienBV
+// @name         Blum Autoclicker
 // @version      1.1
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
