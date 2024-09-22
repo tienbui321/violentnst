@@ -1,6 +1,6 @@
 ﻿// ==UserScript==
 // @name         Blum Autoclicker TienBV
-// @version      2.3
+// @version      2.4
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
 // @match        https://telegram.blum.codes/*
@@ -164,7 +164,7 @@ try {
         await _doClaims();
 
         // await _doTasks();
-        regObserve();
+        await regObserve();
 
         await _playGames();
     }
@@ -371,7 +371,7 @@ try {
         taskButton.classList.add("task_done");
     }
 
-    function regObserve() {
+    async function regObserve() {
         const observer = new MutationObserver(mutations => {
             for (const mutation of mutations) {
                 if (mutation.type === 'childList') {
