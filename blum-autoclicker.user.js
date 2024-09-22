@@ -1,6 +1,6 @@
 ﻿// ==UserScript==
 // @name         Blum Autoclicker TienBV
-// @version      1.5
+// @version      1.6
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
 // @match        https://telegram.blum.codes/*
@@ -161,7 +161,7 @@ try {
             for (const mutation of mutations) {
                 if (mutation.type === 'childList') {
                     checkOutGame();
-
+                    checkGameOver();
                     if (isPlayingGame == 0) {
                         checkClaimTicket();
 
