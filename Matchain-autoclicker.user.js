@@ -1,6 +1,6 @@
 ﻿    // ==UserScript==
     // @name         Matchain Autoclicker TienBV
-    // @version      1.2
+    // @version      1.4
     // @namespace    Violentmonkey Scripts
     // @author       TienBV
     // @match        https://tgapp.matchain.io/*
@@ -36,7 +36,7 @@
 
             await sleep(getClickDelay())
             await _doShortTasks();
-
+            setTaskDone();
             // await sleep(getClickDelay(1000));
             // await process_play_game();
         }
@@ -158,6 +158,11 @@
                 await sleep(getClickDelay());
                 i++;
             }
+        }
+
+        function setTaskDone() {
+            taskButton.textContent = "Done";
+            taskButton.classList.add("task_done");
         }
 
         matchain_doTask();

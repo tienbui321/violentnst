@@ -1,6 +1,6 @@
 ﻿// ==UserScript==
 // @name         Moonbix Autoclicker TienBV
-// @version      1.1
+// @version      1.2
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
 // @match        https://www.binance.com/*
@@ -26,7 +26,6 @@ try {
     taskButton.style.border = 'none';
     taskButton.style.borderRadius = '10px';
     taskButton.style.cursor = 'pointer';
-    taskButton.onclick = _doAuto;
     document.body.appendChild(taskButton);
 
     function simulateClick(element) {
@@ -65,20 +64,13 @@ try {
     }
 
     function checkAndClickPlayButton() {
-        const playButton = document.querySelector('#__APP > div > div > div > div:nth-child(3) > button, .Game_entry__playBtn__1Gi2c');
+        const playButton = document.querySelector('#__APP > div > div > div > div:nth-child(3) > button');
         if (playButton && playButton.textContent.includes('Play')) {
             setTimeout(() => {
                 playButton.click();
                 playGame();
             }, getNewGameDelay());
-        } else {
-            setTaskDone();
         }
-    }
-
-    function continuousPlayButtonCheck() {
-        checkAndClickPlayButton();
-        setTimeout(continuousPlayButtonCheck, 1000);
     }
 
     function checkGameOver() {
@@ -98,19 +90,60 @@ try {
         const observer = new MutationObserver(mutations => {
             for (const mutation of mutations) {
                 if (mutation.type === 'childList') {
+                    checkAndClickPlayButton();
                     checkGameOver();
                 }
             }
         });
 
-        const appElement = await waitAndSelect('#app');
+        const appElement = await waitAndSelect('#__APP');
         if (appElement) {
             observer.observe(appElement, { childList: true, subtree: true });
         }
 
     }
 
-    continuousPlayButtonCheck();
+    async function _doPlay() {
+        await sleep(2000);
+
+        if (document.querySelector('.Game_entry__infoRow__3yzzP > div:last-child').textContent == '0/6')
+            return setTaskDone();
+
+        let startPlayBtn = document.querySelector(".Game_entry__playBtn__1Gi2c");
+        if (startPlayBtn && startPlayBtn.textContent.includes('Play Game')) {
+            await sleep(getNewGameDelay());
+            startPlayBtn.click();
+            playGame();
+
+            regObserve();
+        }
+    }
+
+    async function waitAndSelect(selector) {
+        let i = 0;
+        while (i < 4) {
+            let startClaimBtn = document.querySelector(selector);
+            if (startClaimBtn) {
+                return startClaimBtn;
+            }
+
+            await sleep(getClickDelay());
+            i++;
+        }
+    }
+
+    function _$(selector, parent) {
+        let result = parent ? parent.querySelectorAll(selector) : document.querySelectorAll(selector);
+        if (result.length === 1)
+            return result[0];
+        return result;
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    _doPlay();
 } catch (e) {
     console.log(e);
 }

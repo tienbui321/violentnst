@@ -1,6 +1,6 @@
 ﻿// ==UserScript==
 // @name         Blum Autoclicker TienBV
-// @version      2.4
+// @version      2.5
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
 // @match        https://telegram.blum.codes/*
@@ -341,7 +341,7 @@ try {
 
     async function waitAndClick(selector) {
         let i = 0;
-        while (i < 4) {
+        while (i < 2) {
             let startClaimBtn = document.querySelector(selector);
             if (startClaimBtn) {
                 startClaimBtn.click();
