@@ -1,6 +1,6 @@
 ﻿// ==UserScript==
 // @name         Moonbix Autoclicker TienBV
-// @version      1.2
+// @version      1.3
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
 // @match        https://www.binance.com/*
@@ -63,7 +63,8 @@ try {
         return Math.floor(Math.random() * (3000 - 1000 + 1) + 1000);
     }
 
-    function checkAndClickPlayButton() {
+    async function checkAndClickPlayButton() {
+        await sleep(2000);
         const playButton = document.querySelector('#__APP > div > div > div > div:nth-child(3) > button');
         if (playButton && playButton.textContent.includes('Play')) {
             setTimeout(() => {
@@ -73,7 +74,8 @@ try {
         }
     }
 
-    function checkGameOver() {
+    async function checkGameOver() {
+        await sleep(2000);
         let continueEl = _$(".Game_game__container__1I7MG > div > div:last-child button");
         if (continueEl.textContent == "Continue") {
             setTaskDone();
@@ -104,7 +106,7 @@ try {
     }
 
     async function _doPlay() {
-        await sleep(2000);
+        await sleep(4000);
 
         if (document.querySelector('.Game_entry__infoRow__3yzzP > div:last-child').textContent == '0/6')
             return setTaskDone();
