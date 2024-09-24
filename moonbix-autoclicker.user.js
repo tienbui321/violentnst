@@ -1,6 +1,6 @@
 ﻿// ==UserScript==
 // @name         Moonbix Autoclicker TienBV
-// @version      1.3
+// @version      1.4
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
 // @match        https://www.binance.com/*
@@ -108,6 +108,12 @@ try {
     async function _doPlay() {
         await sleep(4000);
 
+        let dailyReward = await waitAndSelect(".DailyLogin_login__button__15aOK");
+        if (dailyReward)
+            dailyReward.click();
+
+        await sleep(2000);
+
         if (document.querySelector('.Game_entry__infoRow__3yzzP > div:last-child').textContent == '0/6')
             return setTaskDone();
 
@@ -132,6 +138,8 @@ try {
             await sleep(getClickDelay());
             i++;
         }
+
+        return null;
     }
 
     function _$(selector, parent) {
