@@ -1,6 +1,6 @@
 ﻿// ==UserScript==
 // @name         Moonbix Autoclicker TienBV
-// @version      1.4
+// @version      1.5
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
 // @match        https://www.binance.com/*
@@ -135,10 +135,9 @@ try {
                 return startClaimBtn;
             }
 
-            await sleep(getClickDelay());
+            await sleep(1000);
             i++;
         }
-
         return null;
     }
 
