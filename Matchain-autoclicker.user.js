@@ -1,6 +1,6 @@
 ﻿    // ==UserScript==
     // @name         Matchain Autoclicker TienBV
-    // @version      1.4
+    // @version      1.5
     // @namespace    Violentmonkey Scripts
     // @author       TienBV
     // @match        https://tgapp.matchain.io/*
@@ -29,10 +29,12 @@
         document.body.appendChild(taskButton);
 
         async function matchain_doTask() {
+            taskButton.textContent = "Doing";
             await _doClaim();
 
+            await sleep(2000);
+
             _$("#root .bar___hi4Iz li:nth-child(2)").click();
-            taskButton.textContent = "Doing";
 
             await sleep(getClickDelay())
             await _doShortTasks();
