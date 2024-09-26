@@ -45,6 +45,7 @@
 
         async function _doClaim() {
             await waitAndClick(".btn_claim___AC3ka:not(.farming____9oEZ)");
+            await sleep(getClickDelay())
             await waitAndClick(".btn_claim___AC3ka.farming____9oEZ");
         }
 
