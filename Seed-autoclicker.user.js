@@ -1,6 +1,6 @@
 ﻿    // ==UserScript==
     // @name         Seed Autoclicker TienBV
-    // @version      1.0
+    // @version      1.1
     // @namespace    Violentmonkey Scripts
     // @author       TienBV
     // @match        https://cf.seeddao.org/*
@@ -37,19 +37,61 @@
 
             await _doBoost();
 
+            goHome();
+
+            //await _sellWorm();
+
             setTaskDone();
         }
 
         let contentCss = '#root > div:last-child > div:first-child > div:nth-child(2) ';
         let footerCss = '#root > div:last-child > div:last-child ';
 
+        async function _sellWorm() {
+            await sleep(2000);
+            // Click balo
+            document.querySelector('#root > div:last-child > div:first-child > div:nth-child(2) > div:nth-child(2) > div:last-child button:first-child').click();
+            await sleep(6000);
+
+            let worms = document.querySelectorAll('#inventory-list .grid > div> div');
+            worms.forEach(async(worm) => {
+                let price = 0;
+                let wtype = worm.querySelector("div:first-child > div:first-child").textContent;
+                if (wtype.indexOf("uncommon") == 0)
+                    price = 0.9;
+                if (wtype.indexOf("common") == 0)
+                    price = 0.53;
+                if (wtype.indexOf("rare") == 0)
+                    price = 2.85;
+
+                if (wtype.indexOf("epic") == 0)
+                    price = 10.5;
+
+                if (wtype.indexOf("legendary") == 0)
+                    price = 77;
+                if (wtype.indexOf("mythic") == 0)
+                    price = 1000;
+
+                if (price == 0)
+                    return;
+
+                worm.click();
+                await sleep(1000);
+
+                document.querySelector('#modal-input').value = price;
+                document.querySelector('.motion-modal > div > div:last-child button:last-child').click();
+
+                await sleep(6000);
+            });
+        }
+
         async function _doClaim() {
             // Check news
             await waitAndClick(contentCss + " > div:last-child button");
 
-            await sleep(1000);
+            await sleep(2000);
 
-            // 
+            // cleam
             let claimBtn = _$(contentCss + "> div:last-child > div > div > div");
             claimBtn && claimBtn.click();
 
@@ -74,6 +116,12 @@
 
             await sleep(1000);
 
+            document.querySelector('#root  > div:last-child > div:first-child  > div:first-child > div:nth-child(3) > div:nth-child(4) > div:first-child  button').click();
+            await sleep(2000);
+
+            document.querySelector('#root  > div:last-child > div:first-child  > div:first-child > div:nth-child(3) > div:nth-child(4) > div:last-child  > div:last-child button').click();
+            await sleep(2000);
+
             // Click Start Login checkin
             document.querySelector('#missionToastContainer').parentElement.querySelector("div:nth-child(3) > div:nth-child(2) button").click();
             await sleep(2000);
@@ -92,8 +140,12 @@
             await sleep(getClickDelay(1000))
 
             let boostItems = _$('#root > div:last-child > div:first-child > div:first-child > div:last-child > div');
-            for (let i = 0; i < 2; i++) {
+            for (let i = 0; i < 3; i++) {
+
                 let boostItem = boostItems[i];
+                if (i == 2)
+                    return await boostWater(boostItem);
+
                 let level = boostItem.querySelector('.col-span-5 > div:first-child p:last-child').textContent;
                 if (level == 'Level 1') {
                     boostItem.click();
@@ -106,6 +158,32 @@
             }
 
             goHome();
+        }
+
+        async function boostWater(boostItem) {
+            boostItem.click();
+            await sleep(getClickDelay(2000));
+
+            // open missions
+            document.querySelector('#root > div:last-child > div:first-child > div:first-child > div:last-child > div:last-child > div > div:last-child button').click();
+            try {
+                await sleep(getClickDelay(1000));
+                if (document.querySelector('button[rel="noreferrer"]:nth-child(6)')) {
+                    document.querySelector('button[rel="noreferrer"]:nth-child(6)').click();
+
+                    await sleep(getClickDelay(7000));
+
+                    // got it
+                    document.querySelector('#root > div:last-child > div:first-child > div:first-child > div:last-child > div:last-child > div > div:last-child button').click();
+
+                    boostItem.click();
+                    await sleep(getClickDelay(1000));
+
+                    _$('#root > div:last-child > div:first-child > div:first-child button').click();
+
+                    await sleep(getClickDelay());
+                }
+            } catch {}
         }
 
         async function _doShortTasks() {
