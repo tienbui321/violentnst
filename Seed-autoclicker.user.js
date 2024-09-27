@@ -1,6 +1,6 @@
 ﻿    // ==UserScript==
     // @name         Seed Autoclicker TienBV
-    // @version      1.2
+    // @version      1.3
     // @namespace    Violentmonkey Scripts
     // @author       TienBV
     // @match        https://cf.seeddao.org/*
@@ -35,11 +35,11 @@
 
             await _doCheckin();
 
-            await _doBoost();
+            // await _doBoost();
 
             goHome();
 
-            //await _sellWorm();
+            // await _sellWorms();
 
             setTaskDone();
         }
@@ -47,42 +47,57 @@
         let contentCss = '#root > div:last-child > div:first-child > div:nth-child(2) ';
         let footerCss = '#root > div:last-child > div:last-child ';
 
-        async function _sellWorm() {
+        async function _sellWorms() {
             await sleep(2000);
             // Click balo
             document.querySelector('#root > div:last-child > div:first-child > div:nth-child(2) > div:nth-child(2) > div:last-child button:first-child').click();
             await sleep(6000);
 
             let worms = document.querySelectorAll('#inventory-list .grid > div> div');
-            worms.forEach(async(worm) => {
-                let price = 0;
-                let wtype = worm.querySelector("div:first-child > div:first-child").textContent;
-                if (wtype.indexOf("uncommon") == 0)
-                    price = 0.9;
-                if (wtype.indexOf("common") == 0)
-                    price = 0.53;
-                if (wtype.indexOf("rare") == 0)
-                    price = 2.85;
 
-                if (wtype.indexOf("epic") == 0)
-                    price = 10.5;
+            for (var i = 0; i < worms.length; i++) {
+                let worm = worms[i];
+                await _sellWorm(worm);
+            }
 
-                if (wtype.indexOf("legendary") == 0)
-                    price = 77;
-                if (wtype.indexOf("mythic") == 0)
-                    price = 1000;
+        }
 
-                if (price == 0)
-                    return;
+        async function _sellWorm(worm) {
+            let price = 0;
+            let wtype = worm.querySelector("div:first-child > div:first-child").textContent;
+            if (wtype.indexOf("uncommon") == 0)
+                price = "0.93";
+            if (wtype.indexOf("common") == 0)
+                price = '0.44';
+            if (wtype.indexOf("rare") == 0)
+                price = "2.92";
 
-                worm.click();
-                await sleep(1000);
+            if (wtype.indexOf("epic") == 0)
+                price = 10.5;
 
-                document.querySelector('#modal-input').value = price;
-                document.querySelector('.motion-modal > div > div:last-child button:last-child').click();
+            if (wtype.indexOf("legendary") == 0)
+                price = 77;
+            if (wtype.indexOf("mythic") == 0)
+                price = 1000;
 
-                await sleep(6000);
-            });
+            if (price == 0)
+                return;
+
+            worm.click();
+            await sleep(1000);
+
+            simulateKeypress(document.querySelector('#modal-input'), price);
+            document.querySelector('.motion-modal > div > div:last-child button:last-child').click();
+
+            await sleep(6000);
+        }
+
+        function simulateKeypress(element, keys) {
+            element.focus();
+            for (let i = 0; i < keys.length; i++) {
+                element.dispatchEvent(new KeyboardEvent('keydown', { 'key': keys.charAt(i) }));
+            }
+
         }
 
         async function _doClaim() {
@@ -116,11 +131,11 @@
 
             await sleep(1000);
 
-            document.querySelector('#root  > div:last-child > div:first-child  > div:first-child > div:nth-child(3) > div:nth-child(4) > div:first-child  button').click();
-            await sleep(2000);
+            // document.querySelector('#root  > div:last-child > div:first-child  > div:first-child > div:nth-child(3) > div:nth-child(4) > div:first-child  button').click();
+            // await sleep(2000);
 
-            document.querySelector('#root  > div:last-child > div:first-child  > div:first-child > div:nth-child(3) > div:nth-child(4) > div:last-child  > div:last-child button').click();
-            await sleep(2000);
+            // document.querySelector('#root  > div:last-child > div:first-child  > div:first-child > div:nth-child(3) > div:nth-child(4) > div:last-child  > div:last-child button').click();
+            // await sleep(2000);
 
             // Click Start Login checkin
             document.querySelector('#missionToastContainer').parentElement.querySelector("div:nth-child(3) > div:nth-child(2) button").click();
