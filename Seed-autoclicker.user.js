@@ -1,6 +1,6 @@
 ﻿    // ==UserScript==
     // @name         Seed Autoclicker TienBV
-    // @version      1.1
+    // @version      1.2
     // @namespace    Violentmonkey Scripts
     // @author       TienBV
     // @match        https://cf.seeddao.org/*
@@ -143,11 +143,11 @@
             for (let i = 0; i < 3; i++) {
 
                 let boostItem = boostItems[i];
-                if (i == 2)
-                    return await boostWater(boostItem);
+                // if (i == 2)
+                //     return await boostWater(boostItem);
 
                 let level = boostItem.querySelector('.col-span-5 > div:first-child p:last-child').textContent;
-                if (level == 'Level 1') {
+                if (level == 'Level 1' || level == 'Level 2') {
                     boostItem.click();
                     await sleep(getClickDelay(2000));
 
