@@ -1,6 +1,6 @@
 ﻿// ==UserScript==
 // @name         Blum Autoclicker TienBV
-// @version      2.6
+// @version      2.7
 // @namespace    Violentmonkey Scripts
 // @author       TienBV
 // @match        https://telegram.blum.codes/*
@@ -196,9 +196,12 @@ try {
         waitAndClick('.play-btn:not(.secondary)');
     }
 
-    function checkClaimTicket() {
+    async function checkClaimTicket() {
         let claimTicketEl = _$("#app > div.daily-reward-page.page.no-padding > div > div.pages-daily-reward-reward > div.footer > div.kit-fixed-wrapper.no-layout-tabs > button");
-        claimTicketEl && claimTicketEl.click();
+        if (claimTicketEl) {
+            await sleep(2000);
+            claimTicketEl.click();
+        }
     }
 
     function checkClaim() {
@@ -217,6 +220,12 @@ try {
             continueEl.click();
             setTaskDone();
         }
+    }
+
+    function checkResetButton() {
+        let resetBtn = _$("#reset");
+        if (resetBtn)
+            resetBtn.click();
     }
 
     let playtime = 0;
@@ -383,6 +392,8 @@ try {
                         checkClaim();
 
                         checkStartClaim();
+
+                        checkResetButton();
                     }
                 }
             }
