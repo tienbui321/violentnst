@@ -1,6 +1,6 @@
 ﻿    // ==UserScript==
     // @name         Matchain Autoclicker TienBV
-    // @version      1.5
+    // @version      1.8
     // @namespace    Violentmonkey Scripts
     // @author       TienBV
     // @match        https://tgapp.matchain.io/*
@@ -34,19 +34,39 @@
 
             await sleep(2000);
 
-            _$("#root .bar___hi4Iz li:nth-child(2)").click();
+            let token = await login();
+            await start_game(token);
 
-            await sleep(getClickDelay())
-            await _doShortTasks();
+            //_$("#root .bar___hi4Iz li:nth-child(2)").click();
+            // await sleep(getClickDelay())
+            // await _doShortTasks();
+
             setTaskDone();
             // await sleep(getClickDelay(1000));
             // await process_play_game();
         }
 
         async function _doClaim() {
+
             await waitAndClick(".btn_claim___AC3ka:not(.farming____9oEZ)");
-            await sleep(getClickDelay())
+            await sleep(getClickDelay());
+
             await waitAndClick(".btn_claim___AC3ka.farming____9oEZ");
+            await sleep(getClickDelay());
+
+            // boost game
+            if (document.querySelector('#root > div > div > div.content___jvMX0.home___efXf1 > div.container___Joeqw > div.item___aAzf7.right_item___U63Ge').textContent.indexOf('Points (0/1)') > 0) {
+                await waitAndClick("#root > div > div > div.content___jvMX0.home___efXf1 > div.container___Joeqw > div.item___aAzf7.item___aAzf7.right_item___U63Ge");
+                await sleep(getClickDelay());
+                await waitAndClick("#root > div > div.container___tYOO7 > div.content___xItdF > div.btn___FttFE");
+                await sleep(getClickDelay());
+            }
+
+            // boost point
+            await waitAndClick("#root > div > div > div.content___jvMX0.home___efXf1 > div.container___Joeqw > div.item___aAzf7.left_item___po1MT");
+            await sleep(getClickDelay());
+            await waitAndClick("#root > div > div.container___tYOO7 > div.content___xItdF > div.btn___FttFE");
+            await sleep(getClickDelay());
         }
 
         async function _doShortTasks() {
@@ -99,59 +119,76 @@
 
         // Game Play
 
-        async function start_game(success) {
-            let url = "https://tgapp-api.matchain.io/api/tgapp/v1/game/play";
+        async function login() {
+            let userLogin = unescape(window.Telegram.WebApp.initData);
+            let userArr = userLogin.split('$')[0].split(',');
+            let uId = userArr[0].split(':')[1].replace("'", "");
+            let firstName = userArr[1].split(":")[1].replaceAll('"', "");
+            let userName = userArr[3].split(":")[1].replaceAll('"', "");
+            let loginPayload = {
+                "first_name": firstName,
+                "last_name": "🌱SEED",
+                "tg_login_params": window.Telegram.WebApp.initData,
+                "uid": parseInt(uId),
+                "username": userName
+            };
 
-            let response = await fetch(url, {
-                method: "GET"
+            let response = await fetch('https://tgapp-api.matchain.io/api/tgapp/v1/user/login', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(loginPayload)
             });
 
-            await success(await response.json());
+            let json = await response.json();
+            if (json.code == 200)
+                return json.data.token;
+
+            return "";
         }
 
-        async function claim_game(token, game_id, point, proxies = None) {
+        async function start_game(token) {
+            if (token == "")
+                return;
+
+            let url = "https://tgapp-api.matchain.io/api/tgapp/v1/game/play";
+            let response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "authorization": token
+                }
+            });
+
+            let play = await response.json();
+            if (play.code == 200) {
+                let point = Math.floor(Math.random() * (155 - 130) + 130);
+                await sleep(30 * 1000);
+                await claim_game(token, play.data.game_id, point);
+
+                if (play.data.game_count > 0)
+                    await start_game(token)
+            }
+        }
+
+        async function claim_game(token, game_id, point) {
             let url = "https://tgapp-api.matchain.io/api/tgapp/v1/game/claim";
             let payload = { "game_id": game_id, "point": point };
 
             let res = await fetch(url, {
                 method: "POST",
-                data: payload
-            });
-
-            console.log(res.json());
-        }
-
-        async function process_play_game() {
-            start_game(async(game) => {
-                try {
-                    let game_id = game["data"]["game_id"]
-                    let ticket_left = game["data"]["game_count"]
-                    if (game_id == "") {
-                        return
-                    }
-
-                    await sleep(30 * 1000);
-
-                    let point = Math.floor(Math.random() * (150 - 130 + 10) + 5);
-
-                    await claim_game(
-                        game_id = game_id, point = point
-                    )
-
-                    if (ticket_left == 0)
-                        return
-
-                    await sleep(getClickDelay(1000));
-                    await process_play_game();
-                } catch {
-
-                }
+                headers: {
+                    "Content-Type": "application/json",
+                    "authorization": token
+                },
+                body: JSON.stringify(payload)
             });
         }
 
         async function waitAndClick(selector) {
             let i = 0;
-            while (i < 10) {
+            while (i < 5) {
                 let startClaimBtn = document.querySelector(selector);
                 if (startClaimBtn) {
                     startClaimBtn.click();
