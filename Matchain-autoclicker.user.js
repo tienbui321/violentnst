@@ -1,6 +1,6 @@
 ﻿    // ==UserScript==
     // @name         Matchain Autoclicker TienBV
-    // @version      1.8
+    // @version      1.9
     // @namespace    Violentmonkey Scripts
     // @author       TienBV
     // @match        https://tgapp.matchain.io/*
@@ -162,7 +162,7 @@
             });
 
             let play = await response.json();
-            if (play.code == 200) {
+            if (play.code == 200 && play.data.game_id != "") {
                 let point = Math.floor(Math.random() * (155 - 130) + 130);
                 await sleep(30 * 1000);
                 await claim_game(token, play.data.game_id, point);
