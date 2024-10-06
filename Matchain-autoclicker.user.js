@@ -28,6 +28,7 @@
         taskButton.onclick = matchain_doTask;
         document.body.appendChild(taskButton);
 
+
         async function matchain_doTask() {
             taskButton.textContent = "Doing";
             await _doClaim();
